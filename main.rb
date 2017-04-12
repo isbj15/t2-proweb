@@ -21,12 +21,13 @@ class Hobbie < ActiveRecord::Base;
     has_and_belongs_to_many :civilians, :dependent => :destroy
 end
 
-class Hhrelation < ActiveRecord::Base;
+class Hcrelation < ActiveRecord::Base;
     self.table_name = "hobbies_civilians"
     belongs_to :hobbie
     belongs_to :civilian
 end
 
+#Transform ARGV given by the user to a hash
 def toHash(args) 
     hash = Hash.new
     args.each do |a|
@@ -35,21 +36,21 @@ def toHash(args)
     return hash
 end
 
+#Validate if the table passed by the user exists
 def validate(string)
     a = ["civilians", "jobs", "shoes", "hobbies"]
     return a.include?(string)
 end
 
+#Insert into the table
 def insert()
     if validate(ARGV.second)
-        hash = toHash(ARGV[2..-1])
-        i = Object.const_get(ARGV.second.capitalize.chomp('s')).new(hash)
+        i = Object.const_get(ARGV.second.capitalize.chomp('s')).new(toHash(ARGV[2..-1])) #Transform table name given by the user to the respective class, i.e. civilians => Civilian
         i.save()
         print "New #{ARGV.second.chomp('s')} added: "
         p i
     elsif ARGV.second == "hobbies_civilians"
-        hash = toHash(ARGV[2..-1])
-        i = Hhrelation.new(hash)
+        i = Hcrelation.new(toHash(ARGV[2..-1]))
         i.save()
         print "New hobbie-civilian relation added: "
         p i
@@ -58,13 +59,14 @@ def insert()
     end
 end
 
+#List the content of a giving table
 def list()
     if validate(ARGV.second)
-        Object.const_get(ARGV.second.capitalize.chomp('s')).all.each do |l|
+        Object.const_get(ARGV.second.capitalize.chomp('s')).all.each do |l| #Transform table name given by the user to the respective class, i.e. civilians => Civilian
             p l
         end
     elsif ARGV.second == "hobbies_civilians"
-        Hhrelation.all.each do |l|
+        Hcrelation.all.each do |l|
             p l
         end
     else
@@ -72,18 +74,17 @@ def list()
     end
 end
 
-def exclude()
+#Delete from the table accordinly with a given rule, i.e. last_name="Silva"
+def delete()
     if validate(ARGV.second)
-        hash = toHash(ARGV[2..-1])
-        ex = Object.const_get(ARGV.second.capitalize.chomp('s')).where(hash)
+        ex = Object.const_get(ARGV.second.capitalize.chomp('s')).where(toHash(ARGV[2..-1])) #Transform table name given by the user to the respective class, i.e. civilians => Civilian
         print "Removing following #{ARGV.second}: "
         ex.each do |e|
             e.destroy()
             p e
         end
     elsif ARGV.second == "hobbies_civilians"
-        hash = toHash(ARGV[2..-1])
-        ex = Hhrelation.where(hash)
+        ex = Hcrelation.where(toHash(ARGV[2..-1]))
         print "Removing following hobbies-civilian relations: "
         ex.each do |e|
             e.destroy()
@@ -94,30 +95,61 @@ def exclude()
     end
 end
 
-def change()
+#Update a value in teh table
+def update()
     if validate(ARGV.second)
-        Object.const_get(ARGV.second.capitalize.chomp('s')).find(ARGV[2].split('=').second).update(toHash(ARGV[3..-1]))
-        #pega o registro no banco para printar
+        Object.const_get(ARGV.second.capitalize.chomp('s')).find(ARGV[2].split('=').second).update(toHash(ARGV[3..-1])) #Transform table name given by the user to the respective class, i.e. civilians => Civilian
         c = Object.const_get(ARGV.second.capitalize.chomp('s')).find(ARGV[2].split('=').second)
         print "Após update: "
         p c
     elsif ARGV.second == "hobbies_civilians"
+        Hcrelation.find(ARGV[2].split('=').second).update(toHash(ARGV[3..-1]))
+        c = Hcrelation.find(ARGV[2].split('=').second)
+        print "Após update: "
+        p c
     else
          print "Invalid table."  
     end
 end
 
+#Runs the ruby file to create the table scheme
+def createScheme()
+    exec 'ruby createScheme.rb'
+end
+
+#Run the shellscrip file to seed the tables with a preset content
+def seed()
+   exec './seeder.sh' 
+end
+
+#Run the shellscrip file to list all the content of all the tables
+def listall()
+    exec './listall.sh'
+end
+
+#Run the shellscrip file to drop the table
+def dropTable()
+    exec 'rm ./Project.sqlite3'
+end
+
 #=begin
 case ARGV.first
 when 'insert'
-    ARGV.second.inspect
     insert()
 when 'list'
     list()
-when 'exclude'
-    exclude()
-when 'change'
-    change()
+when 'delete'
+    delete()
+when 'update'
+    update()
+when 'createScheme'
+    createScheme()
+when 'seed'
+    seed()
+when 'listall'
+    listall()
+when 'droptable'
+    dropTable()
 else
     puts 'invalid command.'
 end

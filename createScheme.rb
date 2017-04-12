@@ -22,8 +22,8 @@ ActiveRecord::Base.connection.create_table :hobbies do |t|
 end
 
 ActiveRecord::Base.connection.create_table :civilians do |t|  
-  t.string   :last_name 
   t.string   :first_name 
+  t.string   :last_name 
   t.string   :address 
   t.string   :city 
 end
