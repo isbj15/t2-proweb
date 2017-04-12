@@ -1,0 +1,14 @@
+Execução:
+-Rode ruby criaSchema.rb - irá criar o banco de dados
+-Rode ./seeder.sh - irá criar os dados de testes
+-Rode ruby ruby.rb <operacao> <tabela> <argumentos> (no arquivo seeder.sh é possível ver alguns exemplos)
+-Para fazer update de algum registro, o formato é: ruby ruby.rb altera <tabela> id=<id do registro a ser alterado> <argumentos>. Ex:
+    ruby ruby.rb altera pessoas id=4 last_name="Joaquim" city="Tokyo"
+    ruby ruby.rb altera casas   id=2 cor="Vermelho"
+
+Obs:
+-O exclui vai fazer a operação "AND" para cada argumento passado.
+    ruby ruby.rb exclui pessoas first_name="Joao"                   --EXCLUI OS 2 JOAO DO BANCO
+    ruby ruby.rb exclui pessoas first_name="Joao" city="Curitiba"   --EXCLUI APENAS O JOAO QUE MORA EM CURITIBA
+-Ao deletar uma pessoa, sua profissao, sapatos e propiedades (casas_pessoas) são deletadas também, o equivalente ocorre com casas (feito com :dependent => :destroy)
+-O programa não checka integridade de banco de dados, gravar profissao com pessoa_id para um usuário que não existe não irá gerar erros
