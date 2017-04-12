@@ -1,43 +1,44 @@
 require 'active_record'
 
 ActiveRecord::Base.establish_connection :adapter => "sqlite3",
-                                        :database => "Aulas.sqlite3" 
+                                        :database => "Project.sqlite3" 
 
-class Person < ActiveRecord::Base; 
+class Civilian < ActiveRecord::Base; 
     has_one  :job, :dependent => :destroy
     has_many :shoes, :dependent => :destroy
     has_and_belongs_to_many :hobbies, :dependent => :destroy
 end
 
 class Job < ActiveRecord::Base;
-    belongs_to :person
+    belongs_to :civilian
 end
 
 class Shoe < ActiveRecord::Base; 
-    belongs_to :person
+    belongs_to :civilian
 end
 
 class Hobbie < ActiveRecord::Base; 
-    has_and_belongs_to_many :persons, :dependent => :destroy
+    has_and_belongs_to_many :civilians, :dependent => :destroy
 end
 
-class Hprelation < ActiveRecord::Base;
-    self.table_name = "hobbies_persons"
+class Hhrelation < ActiveRecord::Base;
+    self.table_name = "hobbies_civilians"
     belongs_to :hobbie
-    belongs_to :person
+    belongs_to :civilian
 end
 
 def toHash(args) 
     hash = Hash.new
-    for args.each do |a|
+    args.each do |a|
         hash[a.split('=').first] = a.split('=').second
     end
     return hash
 end
 
 def validate(string)
-    a = ["persons", "jobs", "shoes"]
+    a = ["civilians", "jobs", "shoes", "hobbies"]
     return a.include?(string)
+end
 
 def insert()
     if validate(ARGV.second)
@@ -46,11 +47,11 @@ def insert()
         i.save()
         print "New #{ARGV.second.chomp('s')} added: "
         p i
-    elsif ARGV.second = "hobbies_persons"
+    elsif ARGV.second == "hobbies_civilians"
         hash = toHash(ARGV[2..-1])
-        i = Hprelation.new(hash)
+        i = Hhrelation.new(hash)
         i.save()
-        print "New hobbie-person relation added: "
+        print "New hobbie-civilian relation added: "
         p i
     else
         print "Invalid table."
@@ -61,9 +62,11 @@ def list()
     if validate(ARGV.second)
         Object.const_get(ARGV.second.capitalize.chomp('s')).all.each do |l|
             p l
-    elsif ARGV.second = "hobbies_persons"
-        Hprelations.all.each do |l|
+        end
+    elsif ARGV.second == "hobbies_civilians"
+        Hhrelation.all.each do |l|
             p l
+        end
     else
         print "Invalid table."
     end
@@ -77,13 +80,28 @@ def exclude()
         ex.each do |e|
             e.destroy()
             p e
-    elsif ARGV.second = "hobbies_persons"
+        end
+    elsif ARGV.second == "hobbies_civilians"
         hash = toHash(ARGV[2..-1])
-        ex = Hprelation.where(hash)
-        print "Removing following hobbie-person relations: "
+        ex = Hhrelation.where(hash)
+        print "Removing following hobbies-civilian relations: "
         ex.each do |e|
             e.destroy()
             p e
+        end
+    else
+         print "Invalid table."  
+    end
+end
+
+def change()
+    if validate(ARGV.second)
+        Object.const_get(ARGV.second.capitalize.chomp('s')).find(ARGV[2].split('=').second).update(toHash(ARGV[3..-1]))
+        #pega o registro no banco para printar
+        c = Object.const_get(ARGV.second.capitalize.chomp('s')).find(ARGV[2].split('=').second)
+        print "Após update: "
+        p c
+    elsif ARGV.second == "hobbies_civilians"
     else
          print "Invalid table."  
     end
@@ -92,6 +110,7 @@ end
 #=begin
 case ARGV.first
 when 'insert'
+    ARGV.second.inspect
     insert()
 when 'list'
     list()
