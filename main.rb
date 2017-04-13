@@ -6,7 +6,7 @@ ActiveRecord::Base.establish_connection :adapter => "sqlite3",
 class Civilian < ActiveRecord::Base; 
     has_one  :job, :dependent => :destroy
     has_many :shoes, :dependent => :destroy
-    has_and_belongs_to_many :hobbies, :dependent => :destroy
+    has_and_belongs_to_many :interests, :dependent => :destroy
 end
 
 class Job < ActiveRecord::Base;
@@ -17,13 +17,13 @@ class Shoe < ActiveRecord::Base;
     belongs_to :civilian
 end
 
-class Hobbie < ActiveRecord::Base; 
+class Interest < ActiveRecord::Base; 
     has_and_belongs_to_many :civilians, :dependent => :destroy
 end
 
-class Hcrelation < ActiveRecord::Base;
-    self.table_name = "hobbies_civilians"
-    belongs_to :hobbie
+class CIRelation < ActiveRecord::Base;
+    self.table_name = "civilians_interests"
+    belongs_to :interest
     belongs_to :civilian
 end
 
@@ -38,7 +38,7 @@ end
 
 #Validate if the table passed by the user exists
 def validate(string)
-    a = ["civilians", "jobs", "shoes", "hobbies"]
+    a = ["civilians", "jobs", "shoes", "interests"]
     return a.include?(string)
 end
 
@@ -49,10 +49,10 @@ def insert()
         i.save()
         print "New #{ARGV.second.chomp('s')} added: "
         p i
-    elsif ARGV.second == "hobbies_civilians"
-        i = Hcrelation.new(toHash(ARGV[2..-1]))
+    elsif ARGV.second == "civilians_interests"
+        i = CIRelation.new(toHash(ARGV[2..-1]))
         i.save()
-        print "New hobbie-civilian relation added: "
+        print "New civilian-interest relation added: "
         p i
     else
         print "Invalid table."
@@ -65,8 +65,8 @@ def list()
         Object.const_get(ARGV.second.capitalize.chomp('s')).all.each do |l| #Transform table name given by the user to the respective class, i.e. civilians => Civilian
             p l
         end
-    elsif ARGV.second == "hobbies_civilians"
-        Hcrelation.all.each do |l|
+    elsif ARGV.second == "civilians_interests"
+        CIRelation.all.each do |l|
             p l
         end
     else
@@ -79,13 +79,14 @@ def delete()
     if validate(ARGV.second)
         ex = Object.const_get(ARGV.second.capitalize.chomp('s')).where(toHash(ARGV[2..-1])) #Transform table name given by the user to the respective class, i.e. civilians => Civilian
         print "Removing following #{ARGV.second}: "
+        ex.inspect
         ex.each do |e|
             e.destroy()
             p e
         end
-    elsif ARGV.second == "hobbies_civilians"
-        ex = Hcrelation.where(toHash(ARGV[2..-1]))
-        print "Removing following hobbies-civilian relations: "
+    elsif ARGV.second == "civilians_interests"
+        ex = CIRelation.where(toHash(ARGV[2..-1]))
+        print "Removing following civilian-interest relations: "
         ex.each do |e|
             e.destroy()
             p e
@@ -102,9 +103,9 @@ def update()
         c = Object.const_get(ARGV.second.capitalize.chomp('s')).find(ARGV[2].split('=').second)
         print "Após update: "
         p c
-    elsif ARGV.second == "hobbies_civilians"
-        Hcrelation.find(ARGV[2].split('=').second).update(toHash(ARGV[3..-1]))
-        c = Hcrelation.find(ARGV[2].split('=').second)
+    elsif ARGV.second == "civilians_interests"
+        CIRelation.find(ARGV[2].split('=').second).update(toHash(ARGV[3..-1]))
+        c = CIRelation.find(ARGV[2].split('=').second)
         print "Após update: "
         p c
     else
@@ -134,21 +135,21 @@ end
 
 #=begin
 case ARGV.first
-when 'insert'
+when 'insert', 'insere' then
     insert()
-when 'list'
+when 'list', 'lista' then
     list()
-when 'delete'
+when 'delete', 'exclui' then
     delete()
-when 'update'
+when 'update', 'altera' then
     update()
-when 'createScheme'
+when 'createScheme' then
     createScheme()
-when 'seed'
+when 'seed' then
     seed()
-when 'listall'
+when 'listall' then
     listall()
-when 'droptable'
+when 'droptable' then
     dropTable()
 else
     puts 'invalid command.'

@@ -25,14 +25,14 @@ ruby main.rb insert shoes civilian_id=4 size=42 brand='Crocs'
 ruby main.rb insert shoes civilian_id=6 size=35 brand='Vans'
 
 #NxN
-ruby main.rb insert hobbies name="play"
-ruby main.rb insert hobbies name="sleep"
-ruby main.rb insert hobbies name="eat"
-ruby main.rb insert hobbies name="study"
+ruby main.rb insert interests name="play"
+ruby main.rb insert interests name="sleep"
+ruby main.rb insert interests name="eat"
+ruby main.rb insert interests name="study"
 
-ruby main.rb insert hobbies_civilians civilian_id=1 hobbie_id=1
-ruby main.rb insert hobbies_civilians civilian_id=1 hobbie_id=3
-ruby main.rb insert hobbies_civilians civilian_id=2 hobbie_id=1
-ruby main.rb insert hobbies_civilians civilian_id=3 hobbie_id=2
-ruby main.rb insert hobbies_civilians civilian_id=6 hobbie_id=3
-ruby main.rb insert hobbies_civilians civilian_id=6 hobbie_id=2
+ruby main.rb insert civilians_interests civilian_id=1 interest_id=1
+ruby main.rb insert civilians_interests civilian_id=1 interest_id=3
+ruby main.rb insert civilians_interests civilian_id=2 interest_id=1
+ruby main.rb insert civilians_interests civilian_id=3 interest_id=2
+ruby main.rb insert civilians_interests civilian_id=6 interest_id=3
+ruby main.rb insert civilians_interests civilian_id=6 interest_id=2

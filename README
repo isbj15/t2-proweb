@@ -1,0 +1,49 @@
+/* ==========================================================
+ * Projeto 10 destinado a disciplina de Sistemas Operacionais  
+ * 
+ * Autor: Ivo de Souza Bueno Junior 
+ * Disciplina: Tópicos em Programação de Computadores 
+ * Entrega: 12/04/2017 
+ * ========================================================== */
+
+Como executar:
+    Rode:
+        $> ruby main.rb createScheme                        #Cria as tabelas
+        $> ruby main.rb seed                                #Popula as tabelas com dados falsos e relações
+        $> ruby main.rb <operação> <tabela> <argumentos>    #Para exemplos, verificar o arquivo seeder.sh
+        
+Operações:
+    - insert <tabela> <argumentos>                  
+        $> ruby main.rb insert civilians first_name="Fulano" last_name="Da Silva"
+        
+    - update <tabela> id=<id do registro a ser alterado> <argumentos>
+        $> ruby main.rb update civilians id= 1 first_name="Beltrano"
+        
+    - delete <tabela> <argumentos>
+        $> ruby main.rb delete civilians first_name="Fulano" last_name="Da Silva"
+        
+    - list <tabela>
+        $> ruby main.rb list civilians
+        
+    - droptable                     #Deleta o banco de dados. Ex de uso:
+        $> ruby main.rb droptable
+        
+    - createScheme                  #Cria as tabelas. Ex de uso:
+        $> ruby main.rb createScheme
+        
+    - seed                          #Popula as tabelas. Ex de uso:
+        $> ruby main.rb seed
+        
+    - listall                       #Lista todos os elementos de todas as tabelas. Ex de uso:
+        $> ruby main.rb listall
+        
+Tabelas
+    -civilians
+        -jobs       (Relação 1x1)
+        -shoes      (Relação 1xN)
+        -interests  (Relação NxN)
+    -civilians_interests
+    
+Observações:
+    -Para os comandos "insert", "update", "delete" e "list" é possivel utilizar os termos em portugês "insere", "altera", "exclui" e "lista", respectivamente.
+    -O "delete" faz um AND entre os argumentos. TODOS as entradas que respeitarem todos os argumentos serão deletadas.
